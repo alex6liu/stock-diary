@@ -38,15 +38,19 @@
             <div>
                 <Form ref="formVali" :model="modalParams" :rules="ruleValidate" label-position="right"
                       :label-width="130" @keydown.native.enter.prevent="enterConfirm(modalParams.id)">
-                    <FormItem label="品名" prop="name">
+                    <FormItem label="名称" prop="name">
                         <Input v-model="modalParams.name" placeholder="必填，长度 100 以内"
                                style="width: 250px"></Input>
                     </FormItem>
-                    <FormItem label="标准进价" prop="standard_buy_unit_price">
+                    <FormItem label="天数" prop="total_count">
+                        <Input v-model="modalParams.total_count" placeholder="必填"
+                               style="width: 250px"></Input>
+                    </FormItem>
+                    <FormItem label="买价" prop="standard_buy_unit_price">
                         <Input v-model.number="modalParams.standard_buy_unit_price" placeholder="非必填，小数位不超过2位的正整数"
                                style="width: 250px"></Input>
                     </FormItem>
-                    <FormItem label="标准售价" prop="standard_sell_unit_price">
+                    <FormItem label="卖价" prop="standard_sell_unit_price">
                         <Input v-model.number="modalParams.standard_sell_unit_price" placeholder="非必填，小数位不超过2位的正整数"
                                style="width: 250px"></Input>
                     </FormItem>
@@ -143,13 +147,13 @@ export default {
       dataListTotalCount: 0,
       dataList_table_column: [
         {
-          title: '品名',
+          title: '名称',
           key: 'name',
           align: 'center',
           minWidth: 200,
         },
         {
-          title: '数量',
+          title: '天数',
           key: 'total_count',
           align: 'center',
           minWidth: 150,
@@ -158,24 +162,24 @@ export default {
           },*/
         },
         {
-          title: '标准进价',
+          title: '买价',
           key: 'standard_buy_unit_price',
           align: 'center',
           minWidth: 150,
         },
         {
-          title: '标准售价',
+          title: '卖价',
           key: 'standard_sell_unit_price',
           align: 'center',
           minWidth: 150,
         },
         {
-          title: '总金额',
+          title: '年化',
           key: 'total_amount',
           align: 'center',
           minWidth: 150,
           render: (h, params) => {
-            return h('span', params.row.total_amount > 0 ? '+' + params.row.total_amount : params.row.total_amount);
+            return h('span', ((params.row.standard_sell_unit_price / params.row.standard_buy_unit_price - 1) / params.row.total_count * 36500).toFixed(2) + '%');
           },
         },
         {
@@ -416,7 +420,7 @@ export default {
                 this.modalBtnLoading = false;
               } else {
                 const SQL = `INSERT INTO GOODS (name,total_count,total_amount,standard_buy_unit_price,standard_sell_unit_price,remark,create_time,update_time)
-          VALUES ('${modalParams.name}','0','0','${modalParams.standard_buy_unit_price}','${modalParams.standard_sell_unit_price}','${modalParams.remark}','${Date.now()}','')`;
+          VALUES ('${modalParams.name}','${modalParams.total_count}','0','${modalParams.standard_buy_unit_price}','${modalParams.standard_sell_unit_price}','${modalParams.remark}','${Date.now()}','')`;
                 this.$logger(SQL);
                 this.$db.run(SQL, err => {
                   if (err) {
