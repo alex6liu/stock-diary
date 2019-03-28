@@ -80,15 +80,10 @@
                 <span>删除确认</span>
             </p>
             <div style="text-align:center;line-height: 26px;">
-                <p>将永久删除 <strong>{{modalParams.name}}</strong> ，并删除该物品所有进出明细，且<strong>无法恢复</strong>。</p>
-                <p>请输入该物品品名以确认删除。</p>
-                <Input v-model="modalParams.input"
-                       style="width: 250px"></Input>
+                <p>将永久删除，且<strong>无法恢复</strong>。</p>
             </div>
             <div slot="footer">
-                <Button type="error" size="large" long @click="delConfrim" :loading="modalBtnLoading"
-                        :disabled="modalParams.name !== modalParams.input">删除
-                </Button>
+                <Button type="error" size="large" long @click="delConfrim" :loading="modalBtnLoading">删除</Button>
             </div>
         </Modal>
     </div>
@@ -161,18 +156,22 @@ export default {
           align: 'center',
           minWidth: 200,
           render: (h, params) => {
-            let name = '1';
+            let name;
             $.ajax({
               type: 'get',
               async: false,
               url: apis.curr + params.row.code + '.js',
+              cache: false,
               dataType: 'jsonp',
               jsonp: 'callback',
               jsonpCallback: 'jsonpgz',
               success: data => {
+                console.log(1);
+                console.log('data', data);
                 name = data.name;
               },
             });
+            console.log('name1', name);
             return h('span', name);
           },
         },
