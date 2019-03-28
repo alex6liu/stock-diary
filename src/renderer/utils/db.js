@@ -15,7 +15,6 @@ const db = new sqlite3.Database(dbPath);
 db.serialize(() => {
   /**
    * 物品表 GOODS
-   * name 名称
    * code 代码
    * total_amount 购买金额
    * fee 申购费
@@ -25,7 +24,6 @@ db.serialize(() => {
    */
   db.run(`CREATE TABLE GOODS(
     id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    name VARCHAR(255) NOT NULL,
     code VARCHAR(255) NOT NULL,
     total_amount DECIMAL(15,3) NOT NULL,
     fee DECIMAL(15,3) NOT NULL,

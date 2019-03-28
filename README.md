@@ -41,4 +41,11 @@ npm run build:dir
 
 - 解决跨域 https://segmentfault.com/a/1190000012030202
 
-- 数据解析 axios不支持jsonp， 所以改用jquery
+- 数据解析 axios不支持jsonp， 所以改用jquery https://segmentfault.com/a/1190000007754910
+
+### version 2
+- 基金详细, 包括净值曲线
+
+### version 3
+- 增加追投计算
+- 增加定投计算

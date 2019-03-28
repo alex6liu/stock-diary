@@ -38,10 +38,6 @@
             <div>
                 <Form ref="formVali" :model="modalParams" :rules="ruleValidate" label-position="right"
                       :label-width="130" @keydown.native.enter.prevent="enterConfirm(modalParams.id)">
-                    <FormItem label="名称" prop="name">
-                        <Input v-model="modalParams.name" placeholder="必填"
-                               style="width: 250px"></Input>
-                    </FormItem>
                     <FormItem label="代码" prop="code">
                         <Input v-model="modalParams.code" placeholder="必填"
                                style="width: 250px"></Input>
@@ -164,6 +160,21 @@ export default {
           key: 'name',
           align: 'center',
           minWidth: 200,
+          render: (h, params) => {
+            let name = '1';
+            $.ajax({
+              type: 'get',
+              async: false,
+              url: apis.curr + params.row.code + '.js',
+              dataType: 'jsonp',
+              jsonp: 'callback',
+              jsonpCallback: 'jsonpgz',
+              success: data => {
+                name = data.name;
+              },
+            });
+            return h('span', name);
+          },
         },
         {
           title: '代码',
@@ -204,18 +215,21 @@ export default {
           align: 'center',
           minWidth: 150,
           render: (h, params) => {
+            const prev = ((params.row.total_amount - params.row.fee) / params.row.total_count).toFixed(4);
+            let curr;
             $.ajax({
               type: 'get',
+              async: false,
               url: apis.curr + params.row.code + '.js',
               dataType: 'jsonp',
               jsonp: 'callback',
               jsonpCallback: 'jsonpgz',
               success: json => {
-                const curr = json.gsz;
-                console.log(curr);
+                curr = json.gsz;
               },
             });
-            // return h('span', 0);
+            const earn = ((curr - prev) * params.row.total_count).toFixed(3);
+            return h('span', earn);
           },
         },
         {
@@ -224,18 +238,23 @@ export default {
           align: 'center',
           minWidth: 150,
           render: (h, params) => {
+            const prev = ((params.row.total_amount - params.row.fee) / params.row.total_count).toFixed(4);
+            let curr;
+            let currDate;
             $.ajax({
               type: 'get',
+              async: false,
               url: apis.curr + params.row.code + '.js',
               dataType: 'jsonp',
               jsonp: 'callback',
               jsonpCallback: 'jsonpgz',
               success: json => {
-                const curr = json.gsz;
-                console.log(curr);
+                curr = json.gsz;
+                currDate = json.jzrq;
               },
             });
-            // return h('span', 0);
+            const annul = ((curr - prev) * params.row.total_count).toFixed(3) / params.row.total_amount / (currDate - params.row.buy_time) * 365;
+            return h('span', annul);
           },
         },
         {
@@ -379,7 +398,7 @@ export default {
         this.searchParams.pageIndex = method;
       }
       const searchParams = this.searchParams;
-      let whereSQL = `WHERE name LIKE '%${searchParams.name}%' AND remark LIKE '%${searchParams.remark}%' `;
+      let whereSQL = `WHERE code LIKE '%${searchParams.code}%' AND remark LIKE '%${searchParams.remark}%' `;
       searchParams.totalMin !== null ? whereSQL += `AND total_count >= ${searchParams.totalMin} ` : null;
       searchParams.totalMax !== null ? whereSQL += `AND total_count <= ${searchParams.totalMax} ` : null;
       searchParams.buyPriceMin !== null ? whereSQL += `AND standard_buy_unit_price >= ${searchParams.buyPriceMin} ` : null;
@@ -444,43 +463,24 @@ export default {
         if (valid) {
           this.modalBtnLoading = true;
           const modalParams = this.modalParams;
-          // 检测品名是否存在
-          const SQL = `SELECT COUNT(id) AS totalCount from GOODS WHERE name = '${modalParams.name}'`;
-          this.$db.get(SQL, (err, res) => {
+
+          const SQL = `INSERT INTO GOODS (code,total_amount,fee,total_count,buy_time,remark) VALUES ('${modalParams.code}','${modalParams.total_amount}','${modalParams.fee}','${modalParams.total_count}','${Date.parse(new Date(modalParams.buy_time))}','${modalParams.remark}')`;
+          this.$logger(SQL);
+          this.$db.run(SQL, err => {
             if (err) {
               this.$logger(err);
               this.$Notice.error({
-                title: '搜索失败',
+                title: '新增失败',
                 desc: err,
               });
             } else {
-              if (res.totalCount) {
-                this.$Message.warning({
-                  content: '品名已存在',
-                });
-                this.modalBtnLoading = false;
-              } else {
-                const SQL = `INSERT INTO GOODS (name,code,total_amount,fee,total_count,buy_time,remark)
-          VALUES ('${modalParams.name}','${modalParams.code}','${modalParams.total_amount}','${modalParams.fee}','${modalParams.total_count}','${Date.parse(new Date(modalParams.buy_time))}','${modalParams.remark}')`;
-                this.$logger(SQL);
-                this.$db.run(SQL, err => {
-                  if (err) {
-                    this.$logger(err);
-                    this.$Notice.error({
-                      title: '新增失败',
-                      desc: err,
-                    });
-                  } else {
-                    this.modalShow = false;
-                    this.$Message.success({
-                      content: '新增成功',
-                    });
-                    this.getDataList(1);
-                  }
-                  this.modalBtnLoading = false;
-                });
-              }
+              this.modalShow = false;
+              this.$Message.success({
+                content: '新增成功',
+              });
+              this.getDataList(1);
             }
+            this.modalBtnLoading = false;
           });
         }
       });
