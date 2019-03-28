@@ -35,3 +35,6 @@ npm run build:dir
 或
 
 年收益率=[（（总值 - 本金） / 本金）/ 投资天数] * 365 ×100%
+
+#### api
+https://blog.csdn.net/weizhixiang/article/details/51445054

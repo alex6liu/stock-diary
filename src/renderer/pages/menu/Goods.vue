@@ -39,19 +39,27 @@
                 <Form ref="formVali" :model="modalParams" :rules="ruleValidate" label-position="right"
                       :label-width="130" @keydown.native.enter.prevent="enterConfirm(modalParams.id)">
                     <FormItem label="名称" prop="name">
-                        <Input v-model="modalParams.name" placeholder="必填，长度 100 以内"
+                        <Input v-model="modalParams.name" placeholder="必填"
                                style="width: 250px"></Input>
                     </FormItem>
-                    <FormItem label="天数" prop="total_count">
+                    <FormItem label="代码" prop="code">
+                        <Input v-model="modalParams.code" placeholder="必填"
+                               style="width: 250px"></Input>
+                    </FormItem>
+                    <FormItem label="购买金额" prop="total_amount">
+                        <Input v-model="modalParams.total_amount" placeholder="必填"
+                               style="width: 250px"></Input>
+                    </FormItem>
+                    <FormItem label="申购费" prop="fee">
+                        <Input v-model="modalParams.fee" placeholder="必填"
+                               style="width: 250px"></Input>
+                    </FormItem>
+                    <FormItem label="购买份额" prop="total_count">
                         <Input v-model="modalParams.total_count" placeholder="必填"
                                style="width: 250px"></Input>
                     </FormItem>
-                    <FormItem label="买价" prop="standard_buy_unit_price">
-                        <Input v-model.number="modalParams.standard_buy_unit_price" placeholder="非必填，小数位不超过2位的正整数"
-                               style="width: 250px"></Input>
-                    </FormItem>
-                    <FormItem label="卖价" prop="standard_sell_unit_price">
-                        <Input v-model.number="modalParams.standard_sell_unit_price" placeholder="非必填，小数位不超过2位的正整数"
+                    <FormItem label="购买时间" prop="buy_time">
+                        <Input v-model="modalParams.buy_time" placeholder="必填"
                                style="width: 250px"></Input>
                     </FormItem>
                     <FormItem label="备注" prop="remark">
@@ -92,6 +100,7 @@
 <script>
 import util from '../../utils/util';
 import download from '../../utils/download';
+// import axios from 'axios';
 
 export default {
   data() {
@@ -131,6 +140,7 @@ export default {
       // ----常用
       search: {
         name: '',
+        code: '',
         remark: '',
         sort: 'DESC',
         totalMax: null,
@@ -153,34 +163,47 @@ export default {
           minWidth: 200,
         },
         {
-          title: '天数',
-          key: 'total_count',
+          title: '代码',
+          key: 'code',
           align: 'center',
-          minWidth: 150,
-          /* render: (h, params) => {
-            return h('span', params.row.total_count.toFixed(3));
-          },*/
+          minWidth: 200,
         },
         {
-          title: '买价',
-          key: 'standard_buy_unit_price',
-          align: 'center',
-          minWidth: 150,
-        },
-        {
-          title: '卖价',
-          key: 'standard_sell_unit_price',
-          align: 'center',
-          minWidth: 150,
-        },
-        {
-          title: '年化',
+          title: '购买金额',
           key: 'total_amount',
           align: 'center',
           minWidth: 150,
+        },
+        {
+          title: '申购花费',
+          key: 'fee',
+          align: 'center',
+          minWidth: 150,
+        },
+        {
+          title: '购买份额',
+          key: 'total_count',
+          align: 'center',
+          minWidth: 150,
+        },
+        {
+          title: '购买时间',
+          key: 'buy_time',
+          align: 'center',
+          minWidth: 150,
           render: (h, params) => {
-            return h('span', ((params.row.standard_sell_unit_price / params.row.standard_buy_unit_price - 1) / params.row.total_count * 36500).toFixed(2) + '%');
+            console.log(params);
+            return h('span', (new Date(parseInt(params.row.buy_time))).toLocaleString().split(',')[0]);
           },
+        },
+        {
+          title: '年化',
+          key: 'annual',
+          align: 'center',
+          minWidth: 150,
+          // render: (h, params) => {
+          //   return h('span', ((params.row.standard_sell_unit_price / params.row.standard_buy_unit_price - 1) / params.row.total_count * 36500).toFixed(2) + '%');
+          // },
         },
         {
           title: '备注',
@@ -208,24 +231,6 @@ export default {
               ]);
             }
 
-          },
-        },
-        {
-          title: '创建时间',
-          key: 'create_time',
-          align: 'center',
-          minWidth: 150,
-          render: (h, params) => {
-            return h('span', util.dateFilter(params.row.create_time));
-          },
-        },
-        {
-          title: '修改时间',
-          key: 'update_time',
-          align: 'center',
-          minWidth: 150,
-          render: (h, params) => {
-            return h('span', util.dateFilter(params.row.update_time));
           },
         },
         {
@@ -294,8 +299,11 @@ export default {
       modalShow: false,
       modalParams: {
         name: '',
-        standard_buy_unit_price: '',
-        standard_sell_unit_price: '',
+        code: '',
+        total_amount: '',
+        fee: '',
+        total_count: '',
+        buy_time: '',
         remark: '',
       },
       delModalShow: false,
@@ -419,8 +427,8 @@ export default {
                 });
                 this.modalBtnLoading = false;
               } else {
-                const SQL = `INSERT INTO GOODS (name,total_count,total_amount,standard_buy_unit_price,standard_sell_unit_price,remark,create_time,update_time)
-          VALUES ('${modalParams.name}','${modalParams.total_count}','0','${modalParams.standard_buy_unit_price}','${modalParams.standard_sell_unit_price}','${modalParams.remark}','${Date.now()}','')`;
+                const SQL = `INSERT INTO GOODS (name,code,total_amount,fee,total_count,buy_time,remark)
+          VALUES ('${modalParams.name}','${modalParams.code}','${modalParams.total_amount}','${modalParams.fee}','${modalParams.total_count}','${Date.parse(new Date(modalParams.buy_time))}','${modalParams.remark}')`;
                 this.$logger(SQL);
                 this.$db.run(SQL, err => {
                   if (err) {
@@ -537,19 +545,6 @@ export default {
     delConfrim() {
       this.$db.serialize(() => {
         this.$db.run('BEGIN');
-        // 删除所有明细
-        const deleteDetailSQL = `DELETE FROM GOODS_DETAIL_LIST WHERE goods_id = ${this.modalParams.id}`;
-        this.$logger(deleteDetailSQL);
-        this.$db.run(deleteDetailSQL, err => {
-          if (err) {
-            this.$logger(err);
-            this.$db.run('ROLLBACK');
-            this.$Notice.error({
-              title: '删除失败',
-              desc: err,
-            });
-          }
-        });
         const deleteSQL = `DELETE FROM GOODS WHERE id = ${this.modalParams.id}`;
         this.$logger(deleteSQL);
         this.$db.run(deleteSQL, err => {
