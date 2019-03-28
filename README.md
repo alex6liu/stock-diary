@@ -37,4 +37,8 @@ npm run build:dir
 年收益率=[（（总值 - 本金） / 本金）/ 投资天数] * 365 ×100%
 
 #### api
-https://blog.csdn.net/weizhixiang/article/details/51445054
+- 基金api https://blog.csdn.net/weizhixiang/article/details/51445054
+
+- 解决跨域 https://segmentfault.com/a/1190000012030202
+
+- 数据解析 axios不支持jsonp， 所以改用jquery

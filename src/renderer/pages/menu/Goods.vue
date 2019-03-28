@@ -101,6 +101,9 @@
 import util from '../../utils/util';
 import download from '../../utils/download';
 // import axios from 'axios';
+// import jsonp from 'jsonp';
+import $ from 'jquery';
+import apis from '../../utils/apis.js';
 
 export default {
   data() {
@@ -192,8 +195,27 @@ export default {
           align: 'center',
           minWidth: 150,
           render: (h, params) => {
-            console.log(params);
             return h('span', (new Date(parseInt(params.row.buy_time))).toLocaleString().split(',')[0]);
+          },
+        },
+        {
+          title: '收益',
+          key: 'earn',
+          align: 'center',
+          minWidth: 150,
+          render: (h, params) => {
+            $.ajax({
+              type: 'get',
+              url: apis.curr + params.row.code + '.js',
+              dataType: 'jsonp',
+              jsonp: 'callback',
+              jsonpCallback: 'jsonpgz',
+              success: json => {
+                const curr = json.gsz;
+                console.log(curr);
+              },
+            });
+            // return h('span', 0);
           },
         },
         {
@@ -201,9 +223,20 @@ export default {
           key: 'annual',
           align: 'center',
           minWidth: 150,
-          // render: (h, params) => {
-          //   return h('span', ((params.row.standard_sell_unit_price / params.row.standard_buy_unit_price - 1) / params.row.total_count * 36500).toFixed(2) + '%');
-          // },
+          render: (h, params) => {
+            $.ajax({
+              type: 'get',
+              url: apis.curr + params.row.code + '.js',
+              dataType: 'jsonp',
+              jsonp: 'callback',
+              jsonpCallback: 'jsonpgz',
+              success: json => {
+                const curr = json.gsz;
+                console.log(curr);
+              },
+            });
+            // return h('span', 0);
+          },
         },
         {
           title: '备注',
