@@ -168,7 +168,11 @@ export default {
                 name = data.name;
               },
             });
-            return h('span', name);
+            return h('router-link', {
+              attrs: {
+                to: 'detailList/' + params.row.code,
+              },
+            }, name);
           },
         },
         {

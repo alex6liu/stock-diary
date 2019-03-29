@@ -1,13 +1,13 @@
 {
-  "name": "easy-invoices",
+  "name": "Story-Diary",
   "version": "1.0.1",
-  "author": "caandoll <caandoll@aliyun.com>",
-  "description": "Easy invoicing system stand-alone desktop version,An electron-vue sqlite3 project",
+  "author": "",
+  "description": "",
   "license": "MIT",
   "main": "./dist/electron/main.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/CaanDoll/easy-invoices.git"
+    "url": ""
   },
   "keywords": [
     "electron",
@@ -30,9 +30,9 @@
     "packageVersion": "echo $npm_package_version"
   },
   "build": {
-    "productName": "easy-invoices",
-    "copyright": "caandoll",
-    "appId": "org.caandoll.easy-invoices",
+    "productName": "Stock-Diary",
+    "copyright": "",
+    "appId": "org.caandoll.stock-diary",
     "directories": {
       "output": "build"
     },

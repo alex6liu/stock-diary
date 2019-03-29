@@ -7,7 +7,7 @@ import day from 'dayjs';
 import { ipcRenderer } from 'electron';
 import logger from './logger';
 
-const tmpPath = path.join(os.tmpdir(), 'easy-invoices');
+const tmpPath = path.join(os.tmpdir(), 'stock-diary');
 fse.ensureDirSync(tmpPath);
 /**
  * 导出excel

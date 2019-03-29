@@ -34,7 +34,7 @@
 <template>
     <header>
         <section class="left">
-            easy-invoices
+            Stock-Diary
         </section>
         <section class="version">
             {{updateText}}
