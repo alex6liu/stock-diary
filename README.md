@@ -42,6 +42,8 @@ npm run build:dir
 - 解决跨域 https://segmentfault.com/a/1190000012030202
 
 - 数据解析 axios不支持jsonp， 所以改用jquery https://segmentfault.com/a/1190000007754910
+  - ajax也无法解析
+  - 直接暴力切片,取到正确的string,然后json.parse()
 
 ### version 2
 - 基金详细, 包括净值曲线

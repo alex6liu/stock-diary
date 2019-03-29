@@ -162,16 +162,12 @@ export default {
               async: false,
               url: apis.curr + params.row.code + '.js',
               cache: false,
-              dataType: 'jsonp',
-              jsonp: 'callback',
-              jsonpCallback: 'jsonpgz',
               success: data => {
-                console.log(1);
-                console.log('data', data);
+                data = data.split('(')[1].split(')')[0];
+                data = JSON.parse(data);
                 name = data.name;
               },
             });
-            console.log('name1', name);
             return h('span', name);
           },
         },
@@ -220,11 +216,10 @@ export default {
               type: 'get',
               async: false,
               url: apis.curr + params.row.code + '.js',
-              dataType: 'jsonp',
-              jsonp: 'callback',
-              jsonpCallback: 'jsonpgz',
-              success: json => {
-                curr = json.gsz;
+              success: data => {
+                data = data.split('(')[1].split(')')[0];
+                data = JSON.parse(data);
+                curr = data.gsz;
               },
             });
             const earn = ((curr - prev) * params.row.total_count).toFixed(3);
@@ -244,16 +239,17 @@ export default {
               type: 'get',
               async: false,
               url: apis.curr + params.row.code + '.js',
-              dataType: 'jsonp',
-              jsonp: 'callback',
-              jsonpCallback: 'jsonpgz',
-              success: json => {
-                curr = json.gsz;
-                currDate = json.jzrq;
+              success: data => {
+                data = data.split('(')[1].split(')')[0];
+                data = JSON.parse(data);
+                curr = data.gsz;
+                currDate = data.jzrq;
               },
             });
-            const annul = ((curr - prev) * params.row.total_count).toFixed(3) / params.row.total_amount / (currDate - params.row.buy_time) * 365;
-            return h('span', annul);
+            const diff = (Date.parse(new Date(currDate)) - params.row.buy_time) / 86400 / 1000;
+            console.log(diff);
+            const annul = (((curr - prev) * params.row.total_count).toFixed(3) / params.row.total_amount / diff * 365).toFixed(2);
+            return h('span', annul + '%');
           },
         },
         {
