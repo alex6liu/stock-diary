@@ -45,9 +45,10 @@ npm run build:dir
   - ajax也无法解析
   - 直接暴力切片,取到正确的string,然后json.parse()
 
-### version 2
-- 基金详细, 包括净值曲线
+### version 2(abort)
+- 基金详细, 包括净值曲线 // 返回的是string而不是json, 有毒吧!!!
+- 画图用vchart
 
-### version 3
+### version 3(abort)
 - 增加追投计算
 - 增加定投计算

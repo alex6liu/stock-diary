@@ -251,7 +251,6 @@ export default {
               },
             });
             const diff = (Date.parse(new Date(currDate)) - params.row.buy_time) / 86400 / 1000;
-            console.log(diff);
             const annul = (((curr - prev) * params.row.total_count).toFixed(3) / params.row.total_amount / diff * 365).toFixed(2);
             return h('span', annul + '%');
           },
